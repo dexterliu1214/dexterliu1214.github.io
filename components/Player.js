@@ -1,15 +1,15 @@
 import { useThree, useFrame } from "@react-three/fiber"
 import { useSphere } from "@react-three/cannon"
+import { useKeyboardControls } from "@react-three/drei"
 import { html } from 'htm/react'
 import { useRef, useEffect } from 'react'
 import { Vector3 } from 'three'
-import { useKeyboard } from '../hooks/useKeyboard.js'
 
 const JUMP_FORCE = 5 
 const SPEED = 4
 
 export default () => {
-    const {moveForward, moveBackward, moveRight, moveLeft, jump } = useKeyboard()
+    const [_sub, getKeys] = useKeyboardControls()
     const { camera } = useThree()
     const [ref, api] = useSphere(() => ({
         mass: 1,
@@ -27,7 +27,9 @@ export default () => {
         api.position.subscribe((p) => pos.current = p)
     }, [api.position])
 
+
     useFrame(() => {
+        const {moveForward, moveBackward, moveRight, moveLeft, jump } = getKeys()
         camera.position.copy(new Vector3(pos.current[0], pos.current[1], pos.current[2]))
 
         const direction = new Vector3()
